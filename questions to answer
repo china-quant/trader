@@ -1,0 +1,21 @@
+what system performs best on a given ticker?
+
+code should work like this:
+./edwards TICKER DD/MM/YYY SYSTEMNAME
+=> best params for SYSTEMNAME are: X, Y, Z.
+=> Total Return:  XX%
+=> Max Drawdown:  XX%
+=> Win %:         XX%
+=> Avg Win:       X.XR
+=> Avg Loss:      X.XR
+=> Expectancy:    X.XR
+
+which could, for example, search for the best params for an SMA crossover system. basically it has to backtest over a dataset repeatedly in order to converge on the best parameters for return.
+
+things I need to build:
+- data-getting method
+- backtesting system
+- system definition method
+
+- "SMA vs price" system
+- candle-logic system
