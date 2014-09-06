@@ -1,4 +1,6 @@
 module Stocks
+  # allows for testing a variety of SMA systems
+    # configurable sma-length
   class SMASystem
     def initialize(params = {})
       @params = params
@@ -60,9 +62,15 @@ module Stocks
     # returns R gain/loss from trade. assumes exit on close
     def exit(day, fullData, entry)
       if entry[:price] > entry[:stop]  #was a buy trade
-        return (day.close - entry[:price]) / (entry[:price] - entry[:stop])
+        return {
+                 r: (day.close - entry[:price]) / (entry[:price] - entry[:stop]),
+                 percent: (day.close - entry[:price]) / entry[:price]
+               }
       else  # was a short sale trade
-        return (entry[:price] - day.close) / (entry[:stop] - entry[:price])
+        return {
+                 r: (entry[:price] - day.close) / (entry[:stop] - entry[:price]),
+                 percent: (entry[:price] - day.close) / entry[:price]
+               }
       end
     end
 
