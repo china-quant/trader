@@ -19,7 +19,7 @@ module Stocks
     def entry(day, fullData)
     end
     
-    def exit?(day, fullData)
+    def exit?(day, fullData, entry)
       true
     end
 

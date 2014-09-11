@@ -13,6 +13,7 @@ require_relative 'lib/Backtest'
 require_relative 'lib/SMASystem'
 require_relative 'lib/DailyCloseSystem'
 require_relative 'lib/PerfectSystem'
+require_relative 'lib/CandleSystem'
 
 start_date = Date.parse(ARGV[1])
 data = Stocks::DataGetter.new(start_date, ARGV[0])
@@ -24,7 +25,7 @@ s = Stocks::PerfectSystem.new
 t = Stocks::Backtest.new(dayData, s)
 puts "\t#{t.run_test[:string]}"
 
-puts "\n\nFINDING optimal 1-day SMA parameter:"
+puts "\n\nFINDING best SMA:signal-flip parameter:"
 
 sys = Stocks::SMASystem.new({num_avgs: 1, first_sma: 2})
 test = Stocks::Backtest.new(dayData, sys)
@@ -62,3 +63,6 @@ if bull_result[:tR] > bear_result[:tR]
 else
   puts "\tbear\n\t#{bear_result[:string]}"
 end
+
+puts "\n\nTESTING CANDLE SYSTEM:"
+puts "\t#{(Stocks::Backtest.new(dayData, Stocks::CandleSystem.new())).run_test[:string]}"

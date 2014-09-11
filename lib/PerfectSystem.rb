@@ -32,7 +32,7 @@ module Stocks
       end
     end
     
-    def exit?(day, fullData)
+    def exit?(day, fullData, entry)
       true #always exit, cause we can just get back in at the same price
     end
 

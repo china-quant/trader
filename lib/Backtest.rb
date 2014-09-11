@@ -18,7 +18,7 @@ module Stocks
       res_arr = []
       totalR = 0
       @data.each do |day|
-        if entered && @system.exit?(day, @data)
+        if entered && @system.exit?(day, @data, entry)
           resR = @system.exit(day, @data, entry) # #exit returns the R change from the trade
           totalR += resR[:r]
           res_arr.push({ entry: entry, day: day, r: resR[:r], percent: resR[:percent]})

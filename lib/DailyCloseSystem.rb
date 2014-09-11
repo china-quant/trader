@@ -37,7 +37,7 @@ module Stocks
       end
     end
     
-    def exit?(day, fullData)
+    def exit?(day, fullData, entry)
       ind = fullData.find_index(day)
       if ind != 0
         if @params[:bull] == true
