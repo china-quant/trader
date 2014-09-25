@@ -8,15 +8,21 @@ require 'net/http'
 require 'date'
 require_relative 'lib/DayData'
 require_relative 'lib/DataGetter'
+require_relative 'lib/DataGetter2'
 require_relative 'lib/DynamicTimeWarping'
 require_relative 'lib/Backtest'
 require_relative 'lib/SMASystem'
 require_relative 'lib/DailyCloseSystem'
 require_relative 'lib/PerfectSystem'
 require_relative 'lib/CandleSystem'
+require_relative 'lib/ExitOnlySystem'
 
 start_date = Date.parse(ARGV[1])
-data = Stocks::DataGetter.new(start_date, ARGV[0])
+if ARGV[0].upcase == "EURUSD"
+  data = Stocks::DataGetter2.new(start_date, ARGV[0].upcase)
+else
+  data = Stocks::DataGetter.new(start_date, ARGV[0])
+end
 dayData = data.by_day
 # puts dayData
 
@@ -25,6 +31,7 @@ s = Stocks::PerfectSystem.new
 t = Stocks::Backtest.new(dayData, s)
 puts "\t#{t.run_test[:string]}"
 
+=begin
 puts "\n\nFINDING best SMA:signal-flip parameter:"
 
 sys = Stocks::SMASystem.new({num_avgs: 1, first_sma: 2})
@@ -66,3 +73,32 @@ end
 
 puts "\n\nTESTING CANDLE SYSTEM:"
 puts "\t#{(Stocks::Backtest.new(dayData, Stocks::CandleSystem.new())).run_test[:string]}"
+=end
+puts "\n\nFINDING best ENTER-TRUE:X-AWAY parameter:"
+
+sys = Stocks::ExitOnlySystem.new({stop: 1, up: true})
+test = Stocks::Backtest.new(dayData, sys)
+start_result = test.run_test
+# puts test.run_test[:array]
+should_search = true
+last_result = start_result
+new_param = 2
+growing = true
+fails = 0
+
+while should_search do
+  sys1 = Stocks::ExitOnlySystem.new({up: true, stop: new_param})
+  test1 = Stocks::Backtest.new(dayData, sys1)
+  new_result = test1.run_test
+  if new_result[:tR] >= last_result[:tR]
+    last_result = new_result
+    puts "\tnew params: #{sys1.params} is better"
+  else
+    fails+=1
+    should_search = false if fails > 50
+  end
+  new_param = growing ? new_param+1 : new_param-1
+end
+
+puts "\t"+last_result[:string]
+puts last_result[:array]

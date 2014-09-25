@@ -2,7 +2,7 @@
 
 require 'net/http'
 
-samples = 2600
+samples = 2000
 
 def getTICK
   Net::HTTP.start('www.barchart.com') do |http|

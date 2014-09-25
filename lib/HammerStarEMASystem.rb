@@ -1,5 +1,5 @@
 module Stocks
-  class CandleSystem
+  class HammerStarEMASystem
     def initialize(params = {})
       @params = params
     end
@@ -13,54 +13,17 @@ module Stocks
     end
 
     def enter?(day, fullData)
-      ind = fullData.find_index day
-      if ind >= 3
-#       print ", #{candle(day, fullData)}"
-        return candle(day, fullData) ? true : false
-      else
-        return false
-      end
+      false
     end
     
     def entry(day, fullData)
-      type = candle(day, fullData)
-      ind = fullData.find_index day
-      if (type.include? "rising")
-        s = [fullData[ind-2].low, fullData[ind-1].low, day.low].min
-        return {price: day.close, stop: s, index: ind}
-      else
-        s = [fullData[ind-2].high, fullData[ind-1].high, day.high].max
-        return {price: day.close, stop: s, index: ind}
-      end
     end
     
-    # 2-day away low/high wick stop
     def exit?(day, fullData, entry)
-      ind = fullData.find_index day
-      stop = entry[:stop]
-      if entry[:price] > entry[:stop]
-        (ind - entry[:index]).times do |i|
-          index = i + entry[:index] + 1
-          if fullData[index].low < stop
-            return true
-          else
-            stop = [fullData[index-2].low, fullData[index-1].low, fullData[index].low].min
-          end
-        end
-      else
-        (ind - entry[:index]).times do |i|
-          index = i + entry[:index] + 1
-          if fullData[index].high > stop
-            return true
-          else
-            stop = [fullData[index-2].high, fullData[index-1].high, fullData[index].high].max
-          end
-        end
-      end
-      return false
+      true
     end
 
-    # returns R gain/loss and percent change from trade.
+    # returns R gain/loss from trade. assumes exit on close
     def exit(day, fullData, entry)
       if entry[:price] > entry[:stop]  #was a buy trade
         return {
@@ -76,7 +39,6 @@ module Stocks
     end
 
     protected
-
       # using average previous candle heights, classify current candle by japanese rules
       def candle(day, fullData)
         avg_h = prev_avg_h(fullData.find_index(day), fullData)

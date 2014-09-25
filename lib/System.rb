@@ -1,5 +1,5 @@
 module Stocks
-  class DailyCloseSystem
+  class System
     def initialize(params = {})
       @params = params
     end
@@ -25,8 +25,18 @@ module Stocks
 
     # returns R gain/loss from trade. assumes exit on close
     def exit(day, fullData, entry)
+      if entry[:price] > entry[:stop]  #was a buy trade
+        return {
+                 r: (day.close - entry[:price]) / (entry[:price] - entry[:stop]),
+                 percent: (day.close - entry[:price]) / entry[:price]
+               }
+      else  # was a short sale trade
+        return {
+                 r: (entry[:price] - day.close) / (entry[:stop] - entry[:price]),
+                 percent: (entry[:price] - day.close) / entry[:price]
+               }
+      end
     end
 
-    protected
   end
 end
