@@ -10,6 +10,7 @@ module Stocks
       end
     end
 
+#    def value(dataIndex) -> return the value of the indicator at the given index
     protected
 
       def calc_sma(day, fullData, sma_param)
