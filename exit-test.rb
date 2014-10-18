@@ -13,14 +13,22 @@ require_relative 'lib/ATR'
 require_relative 'lib/exit/FourHalfR'
 require_relative 'lib/exit/ProfitDecayATR'
 
-start_date = Date.parse(ARGV[0])
-data_start_date = start_date - 25 # get data for a bit earlier for avgs/atr stuff
-data = Stocks::DataGetter.new(data_start_date, ARGV[1])
-dayData = data.by_day
-atr = Stocks::ATR.new(dayData, [15])
-#puts atr.to_s
+def do_script
+  start_date = Date.parse(ARGV[0])
+  data_start_date = start_date - 25 # get data for a bit earlier for avgs/atr stuff
+  data = Stocks::DataGetter.new(data_start_date, ARGV[1])
+  dayData = data.by_day
+  atr = Stocks::ATR.new(dayData, [15])
+  #puts atr.to_s
 
-puts "time decay 4.5 ATR:"
-puts "#{((Exit::FourHalfR.new({atr: atr, data: dayData, start_date: start_date, long: true})).run)[:str]}"
-puts "\nprofit decay 4.5 ATR:"
-puts "#{((Exit::ProfitDecayATR.new({atr: atr, data: dayData, start_date: start_date, long: true})).run)[:str]}"
+  puts "time decay 4.5 ATR:"
+  puts "#{((Exit::FourHalfR.new({atr: atr, data: dayData, start_date: start_date, long: true})).run)[:str]}"
+  puts "\nprofit decay 4.5 ATR:"
+  puts "#{((Exit::ProfitDecayATR.new({atr: atr, data: dayData, start_date: start_date, long: true})).run)[:str]}"
+end
+
+if ARGV.count == 0
+  puts "usage: ./exit-test.rb [date of entry] [ticker] -s"
+else
+  do_script
+end

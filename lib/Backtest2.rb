@@ -29,6 +29,15 @@ module Stocks
         @exit_sys.long = hash[:long]
         exits.push @exit_sys.run
       end
+      # clean out the overlapping entries
+      exits.delete_if do |trade|
+        ind = exits.find_index(trade)
+        if ind == 0
+          false
+        else
+          trade[:entry_date] <= exits[ind-1][:exit_date]
+        end
+      end
 
       # calculate stats on system
       netR = 0
@@ -45,9 +54,11 @@ module Stocks
         netR += rDelta
         winCount += 1 if rDelta > 0
       end
-      expectancy = netR / exits.count
-      avgDuration = totDur / exits.count
-      winRate = winCount / exits.count
+      if exits.count > 0
+        expectancy = netR / exits.count
+        avgDuration = totDur / exits.count
+        winRate = winCount / exits.count
+      end
 
       return {
               array: exits,
@@ -55,7 +66,8 @@ module Stocks
               netR: netR,
               expectancy: expectancy,
               avgDuration: avgDuration,
-              winRate: winRate
+              winRate: winRate,
+              entries: entries
              }
     end
   end

@@ -161,15 +161,15 @@ def do_script
 # puts "ideal (days, atr_open) = (#{b_atd[:days]}, #{b_atd[:open]}) with netR of #{b_atd[:netR]}"
   extsys  = Exit::Breakout.new({
     data: dayData,
-    open: 5
+    open: 28
   })
-# resu = generic_breakout_test(50, extsys, dayData, start_date, 0)
-# resu[:array].each do |res|
-#   puts res[:str] + " #{res[:entry_date]}"
-# end
-# puts resu[:string]
-  b_b = search_breakout_generic(true, dayData, start_date, extsys)
-  puts "ideal (days, days) = (#{b_b[:days]}, #{b_b[:open]}) with netR of #{b_b[:netR]}"
+  resu = generic_breakout_test(55, extsys, dayData, start_date, 0)
+  resu[:array].each do |res|
+    puts res[:str] + " #{res[:entry_date]}"
+  end
+  puts resu[:string]
+# b_b = search_breakout_generic(true, dayData, start_date, extsys)
+# puts "ideal (days, days) = (#{b_b[:days]}, #{b_b[:open]}) with netR of #{b_b[:netR]}"
 end
 
 if ARGV.count > 1

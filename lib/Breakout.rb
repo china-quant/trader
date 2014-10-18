@@ -19,7 +19,7 @@ module Stocks
       high = 0
       low = 100000000000
       @params[0].times do |i|
-        j = ind - i
+        j = ind - (i+1)
         d_j = data[j]
         high = high < d_j.high ? d_j.high : high
         low = low > d_j.low ? d_j.low : low

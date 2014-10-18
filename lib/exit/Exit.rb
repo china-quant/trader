@@ -7,6 +7,9 @@ module Exit
     def start_date=(date)
       @start_date = date
     end
+    def open=(thing)
+      @open = thing
+    end
 
     def run
       

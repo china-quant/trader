@@ -4,6 +4,10 @@ module Stocks
       #calculate all the values for this indicator and store them
     end
 
+    def data=(data)
+      @data = data
+    end
+
     def value(dataIndex)
       #return the value of the indicator at the given index
       @indicator_values[dataIndex]
