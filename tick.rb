@@ -11,7 +11,11 @@ def getTICK
       "Content-Type" => "application/x-www-form-urlencoded",
       "Referer" => "http://www.barchart.com/quotes/stocks/$TICK"
     })
-    return resp.body.slice(12,9).gsub(",","").to_i
+    if resp.body && resp.body.slice(12,9).gsub(",","") && resp.body.slice(12,9).gsub(",","").to_i
+      return resp.body.slice(12,9).gsub(",","").to_i 
+    else
+      return 10000
+    end
   end
 end
 
