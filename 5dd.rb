@@ -11,8 +11,12 @@ require_relative 'lib/FiveDD'
 
 def do_script
   filename = "sp100list.csv"
+  use_up = false
   if ARGV.count != 0
     filename = "sp500list.csv"
+    if ARGV.count >1 # if there is a second param
+      use_up = true
+    end
   end
   # make the list of stock to check
   sp500list = []
@@ -31,7 +35,8 @@ def do_script
     print "Getting Data for #{ticker}... "
     data = Stocks::DataGetter.new(start_date, ticker)
     dayData = data.by_day
-    fivedd = Stocks::FiveDD.new(dayData)
+    fivedd = Stocks::FiveDD.new(dayData) unless use_up
+    fivedd = Stocks::FiveUD.new(dayData) if use_up
     list.push ticker if fivedd.value(dayData.count-1) == true
   end
   print "\n"
