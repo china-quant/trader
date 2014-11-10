@@ -7,7 +7,7 @@ require 'date'
 require_relative 'lib/DayData'
 require_relative 'lib/DataGetter'
 require_relative 'lib/FiveDD'
-
+require_relative 'lib/FiveUD'
 
 def do_script
   filename = "sp100list.csv"
