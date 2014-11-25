@@ -14,10 +14,10 @@ module Stocks
 
     def fivedd?(day, data)
       ind = data.find_index(day)
-      return false if ind < 4
+      return false if ind < 2
 
       all_down = true
-      5.times do |i|
+      [ind, 5].min.times do |i|
         j = ind - i
         k = ind - (i+1)
         all_down = false unless data[j].close < data[k].close

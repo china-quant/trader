@@ -31,17 +31,23 @@ def do_script
   start_date = Date.today-10
 
   list = []
+  four_list = []
   sp500list.each do |ticker|
-    print "Getting Data for #{ticker}... "
+    print "#{ticker}\t"
     data = Stocks::DataGetter.new(start_date, ticker)
     dayData = data.by_day
     fivedd = Stocks::FiveDD.new(dayData) unless use_up
     fivedd = Stocks::FiveUD.new(dayData) if use_up
     list.push ticker if fivedd.value(dayData.count-1) == true
+    four_list.push ticker if fivedd.value(dayData.count-2) == true
   end
-  print "\n"
+  print "\nFives:\n"
 
   puts list
+
+  print "\nFours:\n"
+
+  puts four_list
 
 end
 
