@@ -1,0 +1,17 @@
+1. define (rigorously) an uptrend
+  - an 'uptrend' starts on a day which a buy at open, with an initial stop of (low - (high-low)) from the day before, and traded following the rules in #5 results in a profit of > 0.2R
+2. write a script to run through a csv of SPY chart data and extract all dates that an uptrend started
+3. define a normalization method for turning the days leading up to the uptrend start into a vector
+  - uptrend start day maps to high = 1, low = 0
+  - previous day maps to high = (high - initial low) / (initial high - initial low) | low = (low - initial low) / (initial high - initial low)
+    - where 'initial high' is the high on the start day
+4. implement a naive-bayes learning script to build models for all reasonable sets of days before uptrend starts
+5. test all models on DIA, QQQ, with a closing system to determine validity
+  - at the close of each day, move the stop up 0.09R, unless any other rule applies
+  - if the low of the day is > 0.4R, move the stop up to the low minus $0.02.
+  - if the stop would advance beyond the day's low, merely advance it to the low minus $0.02.
+
+parameters to tweak:
+- # of days before an 'uptrend' to record (hunch = 5+/- 2) test 1 - 30
+- how much to move the stop up each day intially (hunch = 0.09R) test 0.01R - 0.3R
+- learn on just closing vs high, low, close

@@ -19,13 +19,13 @@ def do_script
   end
   f.close
   sp500list = sp500list.reverse.drop(1).reverse # cleans off the last garbage result
-  sp500list = sp500list + ["iyw","spy","dia","qqq", "bbry"] # add some etfs and a favourite
+  sp500list = sp500list + ["iyw","spy","dia","qqq", "bbry","dog","sh","sco"] # add some etfs and a favourite
 
   start_date = Date.today-10
 
   list = []
   sp500list.each do |ticker|
-    print "Getting Data for #{ticker}... "
+    print "#{ticker}\t"
     Net::HTTP.start("stockcharts.com") do |http|
       resp = http.get("/c-sc/sc?s=#{ticker}&p=D&b=4&g=0&id=p10348519835")
       File.write("./pages/#{ticker}.png",resp.body)

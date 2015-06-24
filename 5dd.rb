@@ -26,7 +26,7 @@ def do_script
   end
   f.close
   sp500list = sp500list.reverse.drop(1).reverse # cleans off the last garbage result
-  sp500list = sp500list + ["iyw","spy","dia","qqq"] # add some etfs
+  sp500list = sp500list + ["iyw","spy","dia","qqq","dog","sco","sh"] # add some etfs
 
   start_date = Date.today-10
 
