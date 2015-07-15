@@ -1,4 +1,4 @@
 *.swp
-data/
+data/daily/
 pages/
 .DS_Store
