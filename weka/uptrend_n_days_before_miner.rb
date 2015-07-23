@@ -10,15 +10,15 @@
 # the script will spit out the comma-separated list of dates only when run without the -v flag
 require 'net/http'
 require 'date'
-require_relative 'lib/DayData'
-require_relative 'lib/DataGetter'
+require_relative '../lib/DayData'
+require_relative '../lib/DataGetter'
 
 def do_script
   options = parse_options
 
   puts "Getting Data..." if options[:verbose]
   start_date = Date.parse(ARGV[1])
-  raw_data = Stocks::DataGetter.new(start_date, ARGV[0])
+  raw_data = Stocks::DataGetter.new(start_date, ARGV[0], options[:end_date])
   day_data = raw_data.by_day
 
   puts "searching for uptrends" if options[:verbose]
@@ -160,6 +160,7 @@ def parse_options
     options[:use_high] = false if arg == '--no-high'
     options[:use_low] = false if arg == '--no-low'
     options[:just_uptrends] = true if arg == '--just-uptrends'
+    options[:end_date] = Date.parse(ARGV[index+1]) if arg == '-e'
   end
   options
 end
@@ -175,5 +176,6 @@ options:
 \t--no-close
 \t--no-high
 \t--no-low
+\t-e yyyy-mm-dd\t\tend date (defaults to today)
 \t--just-uptrends\t\tmakes the output only show the found uptrends instead of vectors for every single day"
 end

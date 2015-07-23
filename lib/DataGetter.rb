@@ -1,13 +1,14 @@
 require_relative 'DayData'
 
 module Stocks
-  # the end date is always the present
+  # the end date defaults to Date.today
   class DataGetter
     SOURCE = "ichart.yahoo.com"
 
-    def initialize(start_date, ticker)
+    def initialize(start_date, ticker, end_date=nil)
       @start_date = start_date
       @ticker = ticker
+      @end_date = end_date.nil? ? Date.today : end_date
       self.get_raw
     end
 
@@ -15,9 +16,9 @@ module Stocks
       day = @start_date.day
       mnth = @start_date.month - 1
       yr = @start_date.year
-      day2 = Date.today.day
-      mnth2 = Date.today.month - 1
-      yr2 = Date.today.year
+      day2 = @end_date.day
+      mnth2 = @end_date.month - 1
+      yr2 = @end_date.year
       Net::HTTP.start(SOURCE) do |http|
         resp = http.get("/table.csv?s=#{@ticker}&a=#{mnth}&b=#{day}&c=#{yr}&d=#{mnth2}&e=#{day2}&f=#{yr2}&g=d&ignore=.csv")
         @raw = resp.body.split(/[,\n]/) #gotta split on comma and newline
