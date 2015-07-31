@@ -1,0 +1,40 @@
+Test each of the following tickers:
+SPY
+DIA
+GLD
+NNN
+QQQ
+K
+USO
+
+over each of the following timeframes:
+2010-01-01 2012-01-01
+2011-01-01 2013-01-01
+2012-01-01 2014-01-01
+2013-01-01 2015-01-01
+2010-01-01 2013-01-01
+2011-01-01 2014-01-01
+2012-01-01 2015-01-01
+2010-01-01 2014-01-01
+2011-01-01 2015-01-01
+2010-01-01 2015-01-01
+
+over each of the following uptrend parameters:
+n days before
+2 
+3
+4
+5
+6
+7
+8
+9
+10
+--min-profit
+0.2 to 0.9 by 0.01 increments
+
+on each of the following model-systems:
+ADTree
+j48 tree
+
+looking for the most robust, high-profit parameter combinations.
