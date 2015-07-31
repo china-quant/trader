@@ -20,35 +20,30 @@ def do_script
     cmd += " #{arg}"
   end
   cmd += " > training/train.arff"
-  Open3.popen3(cmd) # runs the command, no std out to dick with, files are written.
+  out, err, status = Open3.capture3(cmd) # runs the command, no std out to dick with, files are written.
   # generate the test data (same as above, but with different dates)
   cmd = "./uptrend_n_days_before_miner.rb #{options[:ticker]} #{options[:mid_date]} #{options[:n_days_before]} -e #{options[:end_date]}"
   options[:extra].each do |arg|
     cmd += " #{arg}"
   end
   cmd += " > test_sets/test.arff"
-  Open3.popen3(cmd) # runs the command, no std out to dick with, files are written.
+  out, err, status = Open3.capture3(cmd) # runs the command, no std out to dick with, files are written.
 
   # WEKA stuff
   # clear old model
-  Open3.popen3("rm models/j48.model")
+  out, err, status = Open3.capture3("rm models/j48.model")
+  out, err, status = Open3.capture3("rm preditctions.txt")
   # generate model from training data
-  res = ""
-  Open3.popen3("java weka.classifiers.trees.J48 -C 0.25 -M 2 -t ./training/train.arff -d ./models/j48.model") do |sin,sout,serr|
-    res = sout.read + serr.read
-  end
+  out, err, status = Open3.capture3("java weka.classifiers.trees.J48 -C 0.25 -M 2 -t ./training/train.arff -d ./models/j48.model")
   # generate predictions on test data
-  predictions = ""
-  Open3.popen3("java weka.classifiers.trees.J48 -l ./models/j48.model -T ./test_sets/test.arff -p 0") do |stdin, stdout, stderr, wait_thr|
-    predictions = stdout.read + stderr.read
-  end
+  predictions, errs, status = Open3.capture3("java weka.classifiers.trees.J48 -l ./models/j48.model -T ./test_sets/test.arff -p 0")
 #  predictions = predictions.gsub(/.*inst#     actual  predicted error prediction/,'')
-
+  File.write('predictions.txt', predictions)
   # run model_tester.rb on predictions
+  final_out, final_err, status = Open3.capture3("./model_tester.rb #{options[:ticker]} #{options[:mid_date]} predictions.txt -e #{options[:end_date]}")
 
-
-  puts res
-  puts predictions
+  puts final_out
+  puts final_err
 end
 
 def parse_options

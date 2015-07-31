@@ -14,7 +14,7 @@ def do_script
   day_data = raw_data.by_day
 
   puts "Loading Predictions..." if options[:verbose]
-  predictions = IO.read(ARGV[2]).split("\n").map do |line|
+  predictions = IO.read(ARGV[2]).split("\n").select{|line| line[4] && line[5] && (line[4]+line[5]).to_i != 0 }.map do |line|
     line[23] == '1'
   end # is now an array of true/false where true => yes => buy
 
@@ -24,7 +24,7 @@ def do_script
   entry = 0.0
   shares = 0
   in_trade = false
-  r_log = []
+  r_log, capital_log, shares_log, entry_log, exit_log = [], [], [], [], []
   day_data.each_with_index do |day, index|
     if in_trade
       # see if we were stopped out today
@@ -33,9 +33,13 @@ def do_script
         if day.open < stop # gapped
           r_log << ((day.open - entry)/(entry - initial_stop))
           capital = capital + (shares*day.open)
+          capital_log << capital
+          exit_log << day.open
         else # normal stop out
           r_log << ((stop - entry)/(entry - initial_stop))
           capital = capital + (shares*stop)
+          capital_log << capital
+          exit_log << stop
         end
       else # move stop according to rules
         current_r = (day.low - entry) / (entry - initial_stop)
@@ -56,12 +60,14 @@ def do_script
         stop = (day.low - (day.high-day.low))
         initial_stop = stop
         shares = ((capital*0.01) / (entry-stop)).to_i
-        if shares*entry > capital
-          shares = (capital / entry).to_i
+        if shares*entry > capital*2
+          shares = (capital*2 / entry).to_i
           capital -= shares * entry
         else
           capital -= shares * entry
         end
+        shares_log << shares
+        entry_log << entry
         print "." if options[:verbose]
       end
     end
@@ -72,8 +78,10 @@ def do_script
   puts "total trades: #{r_log.count}\twins: #{r_log.select{|r| r>0}.count}\tlosses: #{r_log.select{|r| r<=0}.count}"
   puts "avg win: #{r_log.select{|r| r>0}.inject{ |sum, el| sum + el }.to_f / r_log.select{|r| r>0}.size}\tavg loss: #{r_log.select{|r| r<=0}.inject{ |sum, el| sum + el }.to_f / r_log.select{|r| r<=0}.size}\t"
   puts "biggest win: #{r_log.inject{|win, el| win < el ? el : win}}\tbiggest loss: #{r_log.inject{|loss, el| loss > el ? el : loss}}"
-  puts "R log:\n"
-  puts r_log
+  puts "R log, capital log, shares log, entry log, exit log:\n"
+  r_log.each_with_index do |r, index|
+    print "#{r.to_f.round(2)}\t#{capital_log[index].to_f.round(2)}\t#{shares_log[index].to_f.round(2)}\t#{entry_log[index].to_f.round(2)}\t#{exit_log[index].to_f.round(2)}\n"
+  end
 
 end
 

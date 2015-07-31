@@ -1,0 +1,4 @@
+models/j48.model
+predictions.txt
+test_sets/test.arff
+training/train.arff
