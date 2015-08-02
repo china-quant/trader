@@ -19,9 +19,22 @@ module Stocks
       day2 = @end_date.day
       mnth2 = @end_date.month - 1
       yr2 = @end_date.year
-      Net::HTTP.start(SOURCE) do |http|
-        resp = http.get("/table.csv?s=#{@ticker}&a=#{mnth}&b=#{day}&c=#{yr}&d=#{mnth2}&e=#{day2}&f=#{yr2}&g=d&ignore=.csv")
-        @raw = resp.body.split(/[,\n]/) #gotta split on comma and newline
+      filename = "s=#{@ticker}&a=#{mnth}&b=#{day}&c=#{yr}&d=#{mnth2}&e=#{day2}&f=#{yr2}&g=d&ignore=.csv"
+      if File.file? "../data/#{filename}"
+        @raw = []
+        File.open("../data/#{filename}", 'r') do |f|
+          f.each_line do |line|
+            line.split(',').each do |item|
+              @raw << item
+            end
+          end
+        end
+      else
+        Net::HTTP.start(SOURCE) do |http|
+          resp = http.get("/table.csv?#{filename}")
+          File.write("../data/#{filename}", resp.body)
+          @raw = resp.body.split(/[,\n]/) #gotta split on comma and newline
+        end
       end
     end
 

@@ -73,6 +73,9 @@ def do_script
     end
   end
 
+  days = ((options[:end_date] || Date.today) - start_date).to_i
+  puts "days,$ per day,R per day,trades per day,R per trade,"
+  puts "#{days},#{(capital-10000)/days},#{r_log.inject{ |sum, el| sum + el }.to_f / days},#{r_log.count.to_f/days},#{r_log.inject{ |sum, el| sum + el }.to_f / r_log.size}\n\n"
   puts "This model was run from #{start_date} to #{options[:end_date] || Date.today} on #{ARGV[0]}"
   puts "capital: #{capital}\tavgR: #{r_log.inject{ |sum, el| sum + el }.to_f / r_log.size}\ttotal R: #{r_log.inject{ |sum, el| sum + el }.to_f}"
   puts "total trades: #{r_log.count}\twins: #{r_log.select{|r| r>0}.count}\tlosses: #{r_log.select{|r| r<=0}.count}"
